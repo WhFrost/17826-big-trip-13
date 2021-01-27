@@ -1,10 +1,10 @@
 import AbstractView from '../view/abstract.js';
 import {SORT_TYPE} from '../const.js';
 
-const createEventsSortForm = () => {
+const createEventsSortForm = (currentSortType) => {
   return `<form class="trip-events__trip-sort  trip-sort" action="#" method="get">
   <div class="trip-sort__item  trip-sort__item--day">
-    <input id="sort-day" class="trip-sort__input  visually-hidden" type="radio" name="trip-sort" value="${SORT_TYPE.DAY}" checked>
+    <input id="sort-day" class="trip-sort__input  visually-hidden" type="radio" name="trip-sort" value="${SORT_TYPE.DAY}" ${currentSortType === SORT_TYPE.DAY ? `checked` : ``}>
     <label class="trip-sort__btn" for="sort-day">Day</label>
   </div>
 
@@ -14,12 +14,12 @@ const createEventsSortForm = () => {
   </div>
 
   <div class="trip-sort__item  trip-sort__item--time">
-    <input id="sort-time" class="trip-sort__input  visually-hidden" type="radio" name="trip-sort" value="${SORT_TYPE.TIME}">
+    <input id="sort-time" class="trip-sort__input  visually-hidden" type="radio" name="trip-sort" value="${SORT_TYPE.TIME}"${currentSortType === SORT_TYPE.TIME ? `checked` : ``}>
     <label class="trip-sort__btn" for="sort-time">Time</label>
   </div>
 
   <div class="trip-sort__item  trip-sort__item--price">
-    <input id="sort-price" class="trip-sort__input  visually-hidden" type="radio" name="trip-sort" value="${SORT_TYPE.PRICE}">
+    <input id="sort-price" class="trip-sort__input  visually-hidden" type="radio" name="trip-sort" value="${SORT_TYPE.PRICE}"${currentSortType === SORT_TYPE.PRICE ? `checked` : ``}>
     <label class="trip-sort__btn" for="sort-price">Price</label>
   </div>
 
@@ -31,12 +31,13 @@ const createEventsSortForm = () => {
 };
 
 export default class EventsSort extends AbstractView {
-  constructor() {
+  constructor(currentSortType) {
     super();
+    this._currentSortType = currentSortType;
     this._sortTypeChangeHandler = this._sortTypeChangeHandler.bind(this);
   }
   getTemplate() {
-    return createEventsSortForm();
+    return createEventsSortForm(this._currentSortType);
   }
 
   _sortTypeChangeHandler(evt) {

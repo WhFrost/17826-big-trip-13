@@ -1,6 +1,7 @@
 import PointView from '../view/point.js';
 import EditPointFormView from '../view/edit-point.js';
 import {render, RenderPosition, replace, remove} from '../utils/render.js';
+import {UserAction, UpdateType} from "../const.js";
 
 const Mode = {
   LIST: `LIST`,
@@ -84,10 +85,15 @@ export default class Points {
   }
   _setEditFormSubmitHandler(point) {
     this._replaceEditFormToPoint();
-    this._changeData(point);
+    this._changeData(
+        UserAction.UPDATE_POINT,
+        UpdateType.MINOR,
+        point);
   }
   _handleFavoriteClick() {
     this._changeData(
+        UserAction.UPDATE_POINT,
+        UpdateType.MINOR,
         Object.assign({}, this._point, {isFavorite: !this._point.isFavorite})
     );
   }

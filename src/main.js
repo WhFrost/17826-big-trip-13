@@ -11,4 +11,4 @@ const MainHeaderElement = document.querySelector(`.trip-main`);
 const MainPointsElement = document.querySelector(`.page-main .page-body__container`);
 
 const TripMenu = new TripPresenter(MainHeaderElement, MainPointsElement, pointsModel);
-TripMenu.init(points);
+TripMenu.init();
