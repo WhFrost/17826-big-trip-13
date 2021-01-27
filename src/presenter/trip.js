@@ -18,7 +18,8 @@ import PointPresenter from './point.js';
 import {SORT_TYPE} from '../const.js';
 
 export default class Trip {
-  constructor(tripContainer, pointsContainer) {
+  constructor(tripContainer, pointsContainer, pointsModel) {
+    this._pointsModel = pointsModel;
     this._tripContainer = tripContainer;
     this._pointsContainer = pointsContainer;
     this._pointPresenter = {};
