@@ -22,6 +22,7 @@ export default class Points {
     this._editFormEscHandler = this._editFormEscHandler.bind(this);
     this._setEditFormClickHandler = this._setEditFormClickHandler.bind(this);
     this._setEditFormSubmitHandler = this._setEditFormSubmitHandler.bind(this);
+    this._handleDeleteClick = this._handleDeleteClick.bind(this);
     this._handleFavoriteClick = this._handleFavoriteClick.bind(this);
   }
 
@@ -36,6 +37,7 @@ export default class Points {
     this._pointComponent.setClickHandler(this._setClickHandler);
     this._editPointFormComponent.setEditFormClickHandler(this._setEditFormClickHandler);
     this._editPointFormComponent.setEditFormSubmitHandler(this._setEditFormSubmitHandler);
+    this._editPointFormComponent.setDeleteClickHandler(this._handleDeleteClick);
     this._pointComponent.setFavoriteClickHandler(this._handleFavoriteClick);
 
     if (prevPointComponent === null || prevEditPointFormComponent === null) {
@@ -87,6 +89,12 @@ export default class Points {
     this._replaceEditFormToPoint();
     this._changeData(
         UserAction.UPDATE_POINT,
+        UpdateType.MINOR,
+        point);
+  }
+  _handleDeleteClick(point) {
+    this._changeData(
+        UserAction.DELETE_POINT,
         UpdateType.MINOR,
         point);
   }

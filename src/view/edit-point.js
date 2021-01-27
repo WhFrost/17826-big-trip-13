@@ -132,6 +132,7 @@ export default class EditPointForm extends SmartView {
     this._timeEndPicker = null;
     this._editFormClickHandler = this._editFormClickHandler.bind(this);
     this._editFormSubmitHandler = this._editFormSubmitHandler.bind(this);
+    this._formDeleteClickHandler = this._formDeleteClickHandler.bind(this);
     this._editFormTypeChangeHandler = this._editFormTypeChangeHandler.bind(this);
     this._destinationChangeHandler = this._destinationChangeHandler.bind(this);
     this._timeStartChangeHandler = this._timeStartChangeHandler.bind(this);
@@ -141,6 +142,20 @@ export default class EditPointForm extends SmartView {
     this._setInnerHandlers();
     this._setTimeStartPicker();
     this._setTimeEndPicker();
+    this.setDeleteClickHandler(this._callback.deleteClick);
+  }
+
+  removeElement() {
+    super.removeElement();
+
+    if (this._timeStartPicker) {
+      this._timeStartPicker.destroy();
+      this._timeStartPicker = null;
+    }
+    if (this._timeEndPicker) {
+      this._timeEndPicker.destroy();
+      this._timeEndPicker = null;
+    }
   }
   reset(point) {
     this.updateData(EditPointForm.parsePointToData(point));
@@ -197,7 +212,11 @@ export default class EditPointForm extends SmartView {
   }
   _editFormSubmitHandler(evt) {
     evt.preventDefault();
-    this._callback.editFormSubmit(EditPointForm.parseDateToPoint(this._data));
+    this._callback.editFormSubmit(EditPointForm.parseDataToPoint(this._data));
+  }
+  _formDeleteClickHandler(evt) {
+    evt.preventDefault();
+    this._callback.deleteClick(EditPointForm.parseDataToPoint(this._data));
   }
   _editFormTypeChangeHandler(evt) {
     evt.preventDefault();
@@ -217,7 +236,6 @@ export default class EditPointForm extends SmartView {
     }, true
     );
   }
-
   _timeEndChangeHandler([userDate]) {
     this.updateData({
       timeEnd: dayjs(userDate).second(59).toDate(),
@@ -239,11 +257,15 @@ export default class EditPointForm extends SmartView {
     this._callback.editFormSubmit = callback;
     this.getElement().querySelector(`.event__save-btn`).addEventListener(`click`, this._editFormSubmitHandler);
   }
+  setDeleteClickHandler(callback) {
+    this._callback.deleteClick = callback;
+    this.getElement().querySelector(`.event__reset-btn`).addEventListener(`click`, this._formDeleteClickHandler);
+  }
 
   static parsePointToData(point) {
     return Object.assign({}, point);
   }
-  static parseDateToPoint(data) {
+  static parseDataToPoint(data) {
     data = Object.assign({}, data);
     return data;
   }

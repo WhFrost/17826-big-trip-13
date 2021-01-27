@@ -29,7 +29,7 @@ export default class Points extends Observer {
     if (index === -1) {
       throw new Error(`Can't delete unexisting task`);
     }
-    this._points.splice(index, 1, update);
+    this._points.splice(index, 1);
 
     this._notify(updateType, update);
   }

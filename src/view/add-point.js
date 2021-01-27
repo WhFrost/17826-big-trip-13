@@ -150,7 +150,7 @@ export default class AddPointForm extends SmartView {
 
   _addFormSubmitHandler(evt) {
     evt.preventDefault();
-    this._callback.addFormSubmit(AddPointForm.parseDateToPoint(this._data));
+    this._callback.addFormSubmit(AddPointForm.parseDataToPoint(this._data));
   }
   _addFormTypeChangeHandler(evt) {
     evt.preventDefault();
@@ -178,7 +178,7 @@ export default class AddPointForm extends SmartView {
   static parsePointToData(point) {
     return Object.assign({}, point);
   }
-  static parseDateToPoint(data) {
+  static parseDataToPoint(data) {
     data = Object.assign({}, data);
     return data;
   }
