@@ -1,6 +1,6 @@
 import dayjs from 'dayjs';
 
-const pointsSortDate = (a, b) => dayjs(a.date).diff(dayjs(b.date));
+const pointsSortDate = (a, b) => dayjs(b.date).diff(dayjs(a.date));
 
 const pointsSortDuration = (a, b) => {
   const durationA = dayjs(a.timeEnd).diff(a.timeStart, `minute`);

@@ -1,12 +1,12 @@
 import dayjs from 'dayjs';
-import {citiesList} from '../mock/point.js';
+// import {points} from '../mock/point.js';
 import {pointsSortDate} from '../utils/sort.js';
 import AbstractView from '../view/abstract.js';
 
 const createInfo = (points) => {
-  let cities = citiesList.reduce((total, current) => total + ` &mdash; ` + current);
-  if (citiesList.length > 3) {
-    cities = citiesList[0] + ` &mdash; ... &mdash; ` + citiesList[citiesList.length - 1];
+  let cities = points.reduce((total, current) => total.city + ` &mdash; ` + current.city);
+  if (points.length > 3) {
+    cities = points[0].city + ` &mdash; ... &mdash; ` + points[points.length - 1].city;
   }
   points.sort(pointsSortDate);
   return `<div class="trip-info__main">

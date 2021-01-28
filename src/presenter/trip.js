@@ -1,12 +1,6 @@
 import {RenderPosition, render, remove} from '../utils/render.js';
 import {pointsSortDate, pointsSortDuration, pointsSortPrice} from '../utils/sort.js';
-import TripInfoView from '../view/trip-info.js';
-import HeaderInfoView from '../view/header-info.js';
-import HeaderCostView from '../view/cost.js';
-import TripControlsView from '../view/trip-controls.js';
-import MenuView from '../view/menu.js';
-import FiltersView from '../view/filters.js';
-import AddPointButtonView from '../view/add-point-button.js';
+// import AddPointButtonView from '../view/add-point-button.js';
 import TripEventsView from '../view/trip-events.js';
 import EventsSortView from '../view/events-sort.js';
 import EventsListView from '../view/events-list.js';
@@ -26,16 +20,12 @@ export default class Trip {
 
     this._eventsSort = null;
 
-    this._tripInfo = new TripInfoView();
-    this._tripControls = new TripControlsView();
-    this._menu = new MenuView();
-    this._filters = new FiltersView();
-    this._addPointButton = new AddPointButtonView();
+    // this._addPointButton = new AddPointButtonView();
     this._tripEvents = new TripEventsView();
     this._eventsList = new EventsListView();
     this._noPoints = new NoPointsView();
 
-    this._setAddButtonClickHandler = this._setAddButtonClickHandler.bind(this);
+    // this._setAddButtonClickHandler = this._setAddButtonClickHandler.bind(this);
     this._addFormEscHandler = this._addFormEscHandler.bind(this);
     this._handleViewAction = this._handleViewAction.bind(this);
     this._handleModelEvent = this._handleModelEvent.bind(this);
@@ -46,13 +36,11 @@ export default class Trip {
   }
 
   init() {
-    this._renderTripInfo();
-    this._renderTripControls();
-    this._renderAddPointButton();
+    // this._renderAddPointButton();
     this._renderTripEvents();
     this._renderAddPointForm();
 
-    this._addPointButton.setAddButtonClickHandler(this._setAddButtonClickHandler);
+    // this._addPointButton.setAddButtonClickHandler(this._setAddButtonClickHandler);
   }
   _getPoints() {
     switch (this._currentSortType) {
@@ -104,33 +92,10 @@ export default class Trip {
     this._clearPointList();
     this._renderTripEvents();
   }
-  _renderTripInfo() {
-    render(this._tripInfo, RenderPosition.BEFOREEND, this._tripContainer);
-    this._renderHeaderInfo();
-    this._renderHeaderCost();
-  }
-  _renderHeaderInfo() {
-    this._headerInfo = new HeaderInfoView(this._getPoints());
-    render(this._headerInfo, RenderPosition.AFTERBEGIN, this._tripInfo);
-  }
-  _renderHeaderCost() {
-    this._headerCost = new HeaderCostView(this._getPoints());
-    render(this._headerCost, RenderPosition.BEFOREEND, this._tripInfo);
-  }
-  _renderTripControls() {
-    render(this._tripControls, RenderPosition.BEFOREEND, this._tripContainer);
-    this._renderMenu();
-    this._renderFilters();
-  }
-  _renderMenu() {
-    render(this._menu, RenderPosition.AFTERBEGIN, this._tripControls);
-  }
-  _renderFilters() {
-    render(this._filters, RenderPosition.BEFOREEND, this._tripControls);
-  }
-  _renderAddPointButton() {
-    render(this._addPointButton, RenderPosition.BEFOREEND, this._tripContainer);
-  }
+
+  // _renderAddPointButton() {
+  //   render(this._addPointButton, RenderPosition.BEFOREEND, this._tripContainer);
+  // }
 
   _addFormEscHandler(evt) {
     if (evt.key === `Esc` || evt.key === `Escape`) {
@@ -139,13 +104,13 @@ export default class Trip {
       document.removeEventListener(`keydown`, this._addFormEscHandler);
     }
   }
-  _setAddButtonClickHandler(points) {
-    if (points.length === 0) {
-      render(this._addPointForm, RenderPosition.AFTERBEGIN, this._tripEvents);
-    }
-    render(this._addPointForm, RenderPosition.AFTERBEGIN, this._eventsList);
-    document.addEventListener(`keydown`, this._addFormEscHandler);
-  }
+  // _setAddButtonClickHandler(points) {
+  //   if (points.length === 0) {
+  //     render(this._addPointForm, RenderPosition.AFTERBEGIN, this._tripEvents);
+  //   }
+  //   render(this._addPointForm, RenderPosition.AFTERBEGIN, this._eventsList);
+  //   document.addEventListener(`keydown`, this._addFormEscHandler);
+  // }
   _renderTripEvents() {
     render(this._tripEvents, RenderPosition.AFTERBEGIN, this._pointsContainer);
     if (this._getPoints().length === 0) {
