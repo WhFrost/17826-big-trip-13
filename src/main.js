@@ -33,7 +33,7 @@ const pointsModel = new PointsModel();
 pointsModel.setPoints(points);
 const filtersModel = new FiltersModel();
 
-const tripPresenter = new TripPresenter(MainHeaderElement, MainPointsElement, pointsModel);
-const filtersPresenter = new FiltersPresenter(MainHeaderElement, filtersModel, pointsModel);
+const tripPresenter = new TripPresenter(MainPointsElement, pointsModel, filtersModel);
+const filtersPresenter = new FiltersPresenter(tripControls, filtersModel, pointsModel);
 filtersPresenter.init();
 tripPresenter.init();

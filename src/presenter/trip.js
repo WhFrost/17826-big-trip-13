@@ -1,4 +1,5 @@
 import {RenderPosition, render, remove} from '../utils/render.js';
+import {filter} from '../utils/filter.js';
 import {pointsSortDate, pointsSortDuration, pointsSortPrice} from '../utils/sort.js';
 // import AddPointButtonView from '../view/add-point-button.js';
 import TripEventsView from '../view/trip-events.js';
@@ -11,9 +12,9 @@ import PointPresenter from './point.js';
 import {SORT_TYPE, UpdateType, UserAction} from '../const.js';
 
 export default class Trip {
-  constructor(tripContainer, pointsContainer, pointsModel) {
+  constructor(pointsContainer, pointsModel, filterModel) {
     this._pointsModel = pointsModel;
-    this._tripContainer = tripContainer;
+    this._filterModel = filterModel;
     this._pointsContainer = pointsContainer;
     this._pointPresenter = {};
     this._currentSortType = SORT_TYPE.DAY;
@@ -33,6 +34,7 @@ export default class Trip {
     this._handleSortTypeChange = this._handleSortTypeChange.bind(this);
 
     this._pointsModel.addObserver(this._handleModelEvent);
+    this._filterModel.addObserver(this._handleModelEvent);
   }
 
   init() {
@@ -43,15 +45,19 @@ export default class Trip {
     // this._addPointButton.setAddButtonClickHandler(this._setAddButtonClickHandler);
   }
   _getPoints() {
+    const filterType = this._filterModel.getFilter();
+    const points = this._pointsModel.getPoints();
+    const filteredPoints = filter[filterType](points);
+
     switch (this._currentSortType) {
       case SORT_TYPE.DAY:
-        return this._pointsModel.getPoints().sort(pointsSortDate);
+        return filteredPoints.sort(pointsSortDate);
       case SORT_TYPE.TIME:
-        return this._pointsModel.getPoints().sort(pointsSortDuration);
+        return filteredPoints.sort(pointsSortDuration);
       case SORT_TYPE.PRICE:
-        return this._pointsModel.getPoints().sort(pointsSortPrice);
+        return filteredPoints.sort(pointsSortPrice);
     }
-    return this._pointsModel.getPoints();
+    return filteredPoints;
   }
   _handleViewAction(actionType, updateType, update) {
     switch (actionType) {
