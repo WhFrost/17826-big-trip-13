@@ -1,4 +1,4 @@
-import {FilterType} from "../const";
+// import {FilterType} from "../const";
 
 const filter = {
   // [FilterType.EVERYTHING]: (points) => points.filter((point) => ),
