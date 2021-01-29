@@ -41,6 +41,7 @@ export default class Trip {
   addPoint() {
     this._currentSortType = SORT_TYPE.DAY;
     this._filterModel.setFilter(UpdateType.MAJOR, FilterType.EVERYTHING);
+    remove(this._noPoints);
     this._addPointFormPresenter.init();
   }
   _getPoints() {

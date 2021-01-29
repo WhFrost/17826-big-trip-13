@@ -131,7 +131,6 @@ export default class AddPointForm extends SmartView {
     this._data = AddPointForm.parsePointToData(point);
     this._timeStartPicker = null;
     this._timeEndPicker = null;
-    // this._addFormClickHandler = this._addFormClickHandler.bind(this);
     this._addFormSubmitHandler = this._addFormSubmitHandler.bind(this);
     this._formDeleteClickHandler = this._formDeleteClickHandler.bind(this);
     this._addFormTypeChangeHandler = this._addFormTypeChangeHandler.bind(this);
@@ -166,6 +165,7 @@ export default class AddPointForm extends SmartView {
   restoreHandlers() {
     this._setInnerHandlers();
     this.setAddFormSubmitHandler(this._callback.addFormSubmit);
+    this.setDeleteClickHandler(this._callback.deleteClick);
     this._setTimeStartPicker();
     this._setTimeEndPicker();
   }
@@ -176,7 +176,7 @@ export default class AddPointForm extends SmartView {
     }
     this._timeStartPicker = flatpickr(this.getElement().querySelector(`#event-start-time-1`),
         {
-          dateFormat: `d/m/Y H:i`,
+          dateFormat: `d/m/y H:i`,
           defaultDate: dayjs(this._data.timeStart).toDate(),
           enableTime: true,
           onChange: this._timeStartChangeHandler
@@ -190,7 +190,7 @@ export default class AddPointForm extends SmartView {
     }
     this._timeEndPicker = flatpickr(this.getElement().querySelector(`#event-end-time-1`),
         {
-          dateFormat: `d/m/Y H:i`,
+          dateFormat: `d/m/y H:i`,
           defaultDate: dayjs(this._data.timeEnd).toDate(),
           enableTime: true,
           minDate: new Date(),
@@ -216,6 +216,10 @@ export default class AddPointForm extends SmartView {
   }
   _destinationChangeHandler(evt) {
     evt.preventDefault();
+    if (!citiesList.includes(evt.target.value)) {
+      evt.target.setCustomValidity(`Choose city from the list`);
+      return;
+    }
     this.updateData({
       city: evt.target.value,
     }, true);
@@ -234,6 +238,11 @@ export default class AddPointForm extends SmartView {
   }
   _priceInputHandler(evt) {
     evt.preventDefault();
+    if (!Number.isInteger(+evt.target.value)) {
+      evt.target.setCustomValidity(`Cost must be an integer`);
+      return;
+    }
+    evt.target.setCustomValidity(``);
     this.updateData({
       price: evt.target.value
     }, true);
@@ -245,7 +254,7 @@ export default class AddPointForm extends SmartView {
 
   setAddFormSubmitHandler(callback) {
     this._callback.addFormSubmit = callback;
-    this.getElement().querySelector(`.event__save-btn`).addEventListener(`click`, this._addFormSubmitHandler);
+    this.getElement().querySelector(`.event--edit`).addEventListener(`submit`, this._addFormSubmitHandler);
   }
   setDeleteClickHandler(callback) {
     this._callback.deleteClick = callback;

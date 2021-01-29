@@ -168,6 +168,7 @@ export default class EditPointForm extends SmartView {
     this._setInnerHandlers();
     this.setEditFormClickHandler(this._callback.click);
     this.setEditFormSubmitHandler(this._callback.editFormSubmit);
+    this.setDeleteClickHandler(this._callback.deleteClick);
     this._setTimeStartPicker();
     this._setTimeEndPicker();
   }
@@ -179,7 +180,7 @@ export default class EditPointForm extends SmartView {
     }
     this._timeStartPicker = flatpickr(this.getElement().querySelector(`#event-start-time-1`),
         {
-          dateFormat: `d/m/Y H:i`,
+          dateFormat: `d/m/y H:i`,
           defaultDate: dayjs(this._data.timeStart).toDate(),
           enableTime: true,
           onChange: this._timeStartChangeHandler
@@ -193,7 +194,7 @@ export default class EditPointForm extends SmartView {
     }
     this._timeEndPicker = flatpickr(this.getElement().querySelector(`#event-end-time-1`),
         {
-          dateFormat: `d/m/Y H:i`,
+          dateFormat: `d/m/y H:i`,
           defaultDate: dayjs(this._data.timeEnd).toDate(),
           enableTime: true,
           minDate: new Date(),
@@ -211,14 +212,6 @@ export default class EditPointForm extends SmartView {
     evt.preventDefault();
     this._callback.click();
   }
-  _editFormSubmitHandler(evt) {
-    evt.preventDefault();
-    this._callback.editFormSubmit(EditPointForm.parseDataToPoint(this._data));
-  }
-  _formDeleteClickHandler(evt) {
-    evt.preventDefault();
-    this._callback.deleteClick(EditPointForm.parseDataToPoint(this._data));
-  }
   _editFormTypeChangeHandler(evt) {
     evt.preventDefault();
     this.updateData({
@@ -227,6 +220,10 @@ export default class EditPointForm extends SmartView {
   }
   _destinationChangeHandler(evt) {
     evt.preventDefault();
+    if (!citiesList.includes(evt.target.value)) {
+      evt.target.setCustomValidity(`Choose city from the list`);
+      return;
+    }
     this.updateData({
       city: evt.target.value,
     }, true);
@@ -245,9 +242,22 @@ export default class EditPointForm extends SmartView {
   }
   _priceInputHandler(evt) {
     evt.preventDefault();
+    if (!Number.isInteger(+evt.target.value)) {
+      evt.target.setCustomValidity(`Cost must be an integer`);
+      return;
+    }
+    evt.target.setCustomValidity(``);
     this.updateData({
       price: evt.target.value
     }, true);
+  }
+  _editFormSubmitHandler(evt) {
+    evt.preventDefault();
+    this._callback.editFormSubmit(EditPointForm.parseDataToPoint(this._data));
+  }
+  _formDeleteClickHandler(evt) {
+    evt.preventDefault();
+    this._callback.deleteClick(EditPointForm.parseDataToPoint(this._data));
   }
 
   setEditFormClickHandler(callback) {
@@ -256,7 +266,7 @@ export default class EditPointForm extends SmartView {
   }
   setEditFormSubmitHandler(callback) {
     this._callback.editFormSubmit = callback;
-    this.getElement().querySelector(`.event__save-btn`).addEventListener(`click`, this._editFormSubmitHandler);
+    this.getElement().querySelector(`.event--edit`).addEventListener(`submit`, this._editFormSubmitHandler);
   }
   setDeleteClickHandler(callback) {
     this._callback.deleteClick = callback;
