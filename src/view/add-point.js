@@ -1,4 +1,5 @@
 import dayjs from 'dayjs';
+import he from 'he';
 import flatpickr from "flatpickr";
 import "../../node_modules/flatpickr/dist/flatpickr.min.css";
 import {DEFAULT_POINT} from '../const.js';
@@ -22,11 +23,11 @@ const createPointDateTemplate = (timeStart, timeEnd) => {
   return `<div class="event__field-group  event__field-group--time">
   <label class="visually-hidden" for="event-start-time-1">From</label>
   <input class="event__input  event__input--time" id="event-start-time-1" type="text"
-  name="event-start-time" value="${dayjs(timeStart).format(`DD/MM/YY HH:mm`)}">
+  name="event-start-time" value="${he.encode(dayjs(timeStart).format(`DD/MM/YY HH:mm`))}">
   &mdash;
   <label class="visually-hidden" for="event-end-time-1">To</label>
   <input class="event__input  event__input--time" id="event-end-time-1" type="text"
-  name="event-end-time" value="${dayjs(timeEnd).format(`DD/MM/YY HH:mm`)}">
+  name="event-end-time" value="${he.encode(dayjs(timeEnd).format(`DD/MM/YY HH:mm`))}">
   </div>`;
 };
 
@@ -96,7 +97,7 @@ const createAddPointForm = (point = {}) => {
         <label class="event__label  event__type-output" for="event-destination-1">
           ${type}
         </label>
-        <input class="event__input  event__input--destination" id="event-destination-1" type="text" name="event-destination" value="${city}" list="destination-list-1">
+        <input class="event__input  event__input--destination" id="event-destination-1" type="text" name="event-destination" value="${he.encode(city)}" list="destination-list-1">
           ${citiesTemplate}
       </div>
         ${dateTemplate}
