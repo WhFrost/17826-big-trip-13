@@ -1,15 +1,13 @@
 import {RenderPosition, render, remove} from '../utils/render.js';
 import {filter} from '../utils/filter.js';
 import {pointsSortDate, pointsSortDuration, pointsSortPrice} from '../utils/sort.js';
-// import AddPointButtonView from '../view/add-point-button.js';
 import TripEventsView from '../view/trip-events.js';
 import EventsSortView from '../view/events-sort.js';
 import EventsListView from '../view/events-list.js';
 import NoPointsView from '../view/no-points.js';
-import AddPointFormView from '../view/add-point.js';
-import {generatePoint} from '../mock/point.js';
 import PointPresenter from './point.js';
-import {SORT_TYPE, UpdateType, UserAction} from '../const.js';
+import AddPointFormPresenter from './add-point.js';
+import {SORT_TYPE, UpdateType, UserAction, FilterType} from '../const.js';
 
 export default class Trip {
   constructor(pointsContainer, pointsModel, filterModel) {
@@ -21,13 +19,10 @@ export default class Trip {
 
     this._eventsSort = null;
 
-    // this._addPointButton = new AddPointButtonView();
     this._tripEvents = new TripEventsView();
     this._eventsList = new EventsListView();
     this._noPoints = new NoPointsView();
 
-    // this._setAddButtonClickHandler = this._setAddButtonClickHandler.bind(this);
-    this._addFormEscHandler = this._addFormEscHandler.bind(this);
     this._handleViewAction = this._handleViewAction.bind(this);
     this._handleModelEvent = this._handleModelEvent.bind(this);
     this._handleModeChange = this._handleModeChange.bind(this);
@@ -35,14 +30,18 @@ export default class Trip {
 
     this._pointsModel.addObserver(this._handleModelEvent);
     this._filterModel.addObserver(this._handleModelEvent);
+
+    this._addPointFormPresenter = new AddPointFormPresenter(this._eventsList, this._handleViewAction);
   }
 
   init() {
-    // this._renderAddPointButton();
     this._renderTripEvents();
-    this._renderAddPointForm();
+  }
 
-    // this._addPointButton.setAddButtonClickHandler(this._setAddButtonClickHandler);
+  addPoint() {
+    this._currentSortType = SORT_TYPE.DAY;
+    this._filterModel.setFilter(UpdateType.MAJOR, FilterType.EVERYTHING);
+    this._addPointFormPresenter.init();
   }
   _getPoints() {
     const filterType = this._filterModel.getFilter();
@@ -88,6 +87,7 @@ export default class Trip {
     }
   }
   _handleModeChange() {
+    this._addPointFormPresenter.destroy();
     Object.values(this._pointPresenter).forEach((presenter) => presenter.resetView());
   }
   _handleSortTypeChange(sortType) {
@@ -99,24 +99,6 @@ export default class Trip {
     this._renderTripEvents();
   }
 
-  // _renderAddPointButton() {
-  //   render(this._addPointButton, RenderPosition.BEFOREEND, this._tripContainer);
-  // }
-
-  _addFormEscHandler(evt) {
-    if (evt.key === `Esc` || evt.key === `Escape`) {
-      evt.preventDefault();
-      remove(this._addPointForm);
-      document.removeEventListener(`keydown`, this._addFormEscHandler);
-    }
-  }
-  // _setAddButtonClickHandler(points) {
-  //   if (points.length === 0) {
-  //     render(this._addPointForm, RenderPosition.AFTERBEGIN, this._tripEvents);
-  //   }
-  //   render(this._addPointForm, RenderPosition.AFTERBEGIN, this._eventsList);
-  //   document.addEventListener(`keydown`, this._addFormEscHandler);
-  // }
   _renderTripEvents() {
     render(this._tripEvents, RenderPosition.AFTERBEGIN, this._pointsContainer);
     if (this._getPoints().length === 0) {
@@ -151,10 +133,9 @@ export default class Trip {
       this._renderPoint(point);
     });
   }
-  _renderAddPointForm() {
-    this._addPointForm = new AddPointFormView(generatePoint());
-  }
+
   _clearPointList({resetSortType = false} = {}) {
+    this._addPointFormPresenter.destroy();
     Object
       .values(this._pointPresenter)
       .forEach((presenter) => presenter.destroy());

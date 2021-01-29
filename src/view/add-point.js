@@ -1,7 +1,9 @@
 import dayjs from 'dayjs';
+import flatpickr from "flatpickr";
+import "../../node_modules/flatpickr/dist/flatpickr.min.css";
 import {DEFAULT_POINT} from '../const.js';
 import {pointTypes, citiesList, offersList} from '../mock/point.js';
-import SmartView from '../view/abstract.js';
+import SmartView from '../view/smart.js';
 
 const createPointTypesTemplate = (currentPointType, defaultPointTypes) => {
   return defaultPointTypes.map((type) => `<div class="event__type-item">
@@ -126,21 +128,74 @@ export default class AddPointForm extends SmartView {
   constructor(point = DEFAULT_POINT) {
     super();
     this._data = AddPointForm.parsePointToData(point);
+    this._timeStartPicker = null;
+    this._timeEndPicker = null;
+    // this._addFormClickHandler = this._addFormClickHandler.bind(this);
     this._addFormSubmitHandler = this._addFormSubmitHandler.bind(this);
+    this._formDeleteClickHandler = this._formDeleteClickHandler.bind(this);
     this._addFormTypeChangeHandler = this._addFormTypeChangeHandler.bind(this);
     this._destinationChangeHandler = this._destinationChangeHandler.bind(this);
+    this._timeStartChangeHandler = this._timeStartChangeHandler.bind(this);
+    this._timeEndChangeHandler = this._timeEndChangeHandler.bind(this);
     this._priceInputHandler = this._priceInputHandler.bind(this);
+
     this._setInnerHandlers();
+    this._setTimeStartPicker();
+    this._setTimeEndPicker();
+    this.setDeleteClickHandler(this._callback.deleteClick);
+  }
+  removeElement() {
+    super.removeElement();
+
+    if (this._timeStartPicker) {
+      this._timeStartPicker.destroy();
+      this._timeStartPicker = null;
+    }
+    if (this._timeEndPicker) {
+      this._timeEndPicker.destroy();
+      this._timeEndPicker = null;
+    }
   }
   reset(point) {
     this.updateData(AddPointForm.parsePointToData(point));
   }
+  getTemplate() {
+    return createAddPointForm(this._data);
+  }
   restoreHandlers() {
     this._setInnerHandlers();
     this.setAddFormSubmitHandler(this._callback.addFormSubmit);
+    this._setTimeStartPicker();
+    this._setTimeEndPicker();
   }
-  getTemplate() {
-    return createAddPointForm(this._data);
+  _setTimeStartPicker() {
+    if (this._timeStartPicker) {
+      this._timeStartPicker.destroy();
+      this._timeStartPicker = null;
+    }
+    this._timeStartPicker = flatpickr(this.getElement().querySelector(`#event-start-time-1`),
+        {
+          dateFormat: `d/m/Y H:i`,
+          defaultDate: dayjs(this._data.timeStart).toDate(),
+          enableTime: true,
+          onChange: this._timeStartChangeHandler
+        }
+    );
+  }
+  _setTimeEndPicker() {
+    if (this._timeEndPicker) {
+      this._timeEndPicker.destroy();
+      this._timeEndPicker = null;
+    }
+    this._timeEndPicker = flatpickr(this.getElement().querySelector(`#event-end-time-1`),
+        {
+          dateFormat: `d/m/Y H:i`,
+          defaultDate: dayjs(this._data.timeEnd).toDate(),
+          enableTime: true,
+          minDate: new Date(),
+          onChange: this._timeEndChangeHandler
+        }
+    );
   }
   _setInnerHandlers() {
     this.getElement().querySelector(`.event__type-group`).addEventListener(`change`, this._addFormTypeChangeHandler);
@@ -164,15 +219,36 @@ export default class AddPointForm extends SmartView {
       city: evt.target.value,
     }, true);
   }
+  _timeStartChangeHandler([userDate]) {
+    this.updateData({
+      timeStart: dayjs(userDate).second(59).toDate(),
+    }, true
+    );
+  }
+  _timeEndChangeHandler([userDate]) {
+    this.updateData({
+      timeEnd: dayjs(userDate).second(59).toDate(),
+    }, true
+    );
+  }
   _priceInputHandler(evt) {
     evt.preventDefault();
     this.updateData({
       price: evt.target.value
     }, true);
   }
+  _formDeleteClickHandler(evt) {
+    evt.preventDefault();
+    this._callback.deleteClick(AddPointForm.parseDataToPoint(this._data));
+  }
+
   setAddFormSubmitHandler(callback) {
     this._callback.addFormSubmit = callback;
     this.getElement().querySelector(`.event__save-btn`).addEventListener(`click`, this._addFormSubmitHandler);
+  }
+  setDeleteClickHandler(callback) {
+    this._callback.deleteClick = callback;
+    this.getElement().querySelector(`.event__reset-btn`).addEventListener(`click`, this._formDeleteClickHandler);
   }
 
   static parsePointToData(point) {

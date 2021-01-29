@@ -35,5 +35,13 @@ const filtersModel = new FiltersModel();
 
 const tripPresenter = new TripPresenter(MainPointsElement, pointsModel, filtersModel);
 const filtersPresenter = new FiltersPresenter(tripControls, filtersModel, pointsModel);
+
 filtersPresenter.init();
 tripPresenter.init();
+
+// addPointButton.setAddButtonClickHandler(tripPresenter.addPoint());
+
+document.querySelector(`.trip-main__event-add-btn`).addEventListener(`click`, (evt) => {
+  evt.preventDefault();
+  tripPresenter.addPoint();
+});
